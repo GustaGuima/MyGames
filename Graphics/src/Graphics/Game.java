@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
@@ -39,7 +40,10 @@ public class Game extends Canvas implements Runnable{
 	private SpriteSheet spriteObjective;
 	
 	private int frames = 0;
-	private int maxFrames = 5;
+	private int maxFrames = 7;
+	
+	private int framesSec = 0;
+	private int maxFramesSec = 50;
 	
 	private int curAnimation = 0;
 	private int maxAnimation = 4;
@@ -52,16 +56,25 @@ public class Game extends Canvas implements Runnable{
 	
 	
 	private int x = 0, y = 0;
-	private boolean right, left, down, up, isWalking;
+	private boolean right, left, down, up, isWalking, gameOver = false;
 	private int speed = 3;
 	
+	private Rectangle rec;
+	private Rectangle playerPos;
+	
 	private Integer score = 0;
+	private Integer timer = 5;
 	
 	private int randomX = 30, randomY = 30;
+	
+	private boolean startTimer = false;
 	
 	Random random = new Random();
 	
 	public Game() {
+		rec = new Rectangle();
+		playerPos = new Rectangle();
+		
 		sprite = new SpriteSheet("/Woodcutter_idle.png");
 		spriteMovement = new SpriteSheet("/Woodcutter_walk.png");
 		spriteObjective = new SpriteSheet("/GraveRobber_idle.png");
@@ -120,6 +133,7 @@ public class Game extends Canvas implements Runnable{
 	}
 	
 	public void update() {
+		framesSec++;
 		frames++;
 		if(frames >= maxFrames) {
 			frames = 0;
@@ -152,12 +166,26 @@ public class Game extends Canvas implements Runnable{
 				}
 			}
 			
-			if(x == randomX && y == randomY) {
+			if(startTimer) {
+				if(framesSec >= maxFramesSec) {
+					framesSec = 0;
+					timer--;
+				}
+			}
+			
+			if(rec.intersects(playerPos)) {
+				timer = 5;
 				score++;
-				randomX = random.nextInt(WIDTH * SCALE / WIDTH);
-				randomY = random.nextInt(HEIGHT * SCALE / HEIGHT);
+				randomX = random.nextInt(160);
+				randomY = random.nextInt(120);
 			}
 			System.out.println(x + "-" + y + "Random: "+ randomX +"-"+randomY);
+			
+			if(timer == 0) {
+				timer = 5;
+				startTimer = false;
+				gameOver = true;
+			}
 			
 		}
 		
@@ -165,7 +193,6 @@ public class Game extends Canvas implements Runnable{
 		this.addKeyListener(new KeyListener() {
 			
 			public void keyTyped(KeyEvent e) {
-
 			}
 			
 			@Override
@@ -190,15 +217,21 @@ public class Game extends Canvas implements Runnable{
 				if(e.getKeyCode() == KeyEvent.VK_D) {
 					right = true;
 					isWalking = true;
+					startTimer = true;
 				} if(e.getKeyCode() == KeyEvent.VK_A) {
 					left = true;
 					isWalking = true;
+					startTimer = true;
 				}if(e.getKeyCode() == KeyEvent.VK_S) {
 					down = true;
 					isWalking = true;
+					startTimer = true;
 				}if(e.getKeyCode() == KeyEvent.VK_W) {
 					up = true;
 					isWalking = true;
+					startTimer = true;
+				}if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					gameOver = false;
 				}
 			}
 		});
@@ -229,25 +262,55 @@ public class Game extends Canvas implements Runnable{
 		
 		
 		/*Renderizaçao do Jogo*/
+		Graphics2D g2 = (Graphics2D) g;
 		
 		//Renderiza o Player
-		Graphics2D g2 = (Graphics2D) g;
-		g2.drawImage(playerObjective[objAnimation], randomX, randomY, null);
-		g2.drawImage((isWalking)? playerMovement[animationWalk] : player[curAnimation],(x > WIDTH)? x = -WIDTH : x, (y > HEIGHT)? y = -HEIGHT : y, null);
-		g2.setColor(new Color(0,0,0,100));
-		g2.fillRect(0, 0, WIDTH, HEIGHT);
-		
-		g2.setColor(new Color(255,255,255));
-		g2.setFont(new Font("Arial", Font.BOLD, 15));
-		g2.drawString(Integer.toString(score), WIDTH/2, 20);
 		
 		
-		/***/
+		
+		if(gameOver) {
+			g2.setColor(new Color(255,255,255));
+			g2.setFont(new Font("Arial", Font.BOLD, 25));
+			g2.drawString("Game Over", 50, 50);
+			
+			g2.setColor(new Color(255,255,255));
+			g2.setFont(new Font("Arial", Font.BOLD, 15));
+			g2.drawString("Score: " + score, WIDTH/2, 70);
+			
+			
+			g2.setColor(new Color(255,255,255));
+			g2.setFont(new Font("Arial", Font.BOLD, 13));
+			g2.drawString("Press Enter to Player Again", WIDTH/7, 125);
+		} else {
+			rec.setBounds(randomX, randomY, 5,5);
+			playerPos.setBounds(x,y,5,5);
+			g2.drawImage(playerObjective[objAnimation], randomX, randomY, null);
+			g2.drawImage((isWalking)? playerMovement[animationWalk] : player[curAnimation],(x > WIDTH)? x = -WIDTH : x, (y > HEIGHT)? y = -HEIGHT : y, null);
+			g2.setColor(new Color(0,0,0,100));
+			g2.fillRect(0, 0, WIDTH, HEIGHT);
+			
+			g2.setColor(new Color(255,255,255));
+			g2.setFont(new Font("Arial", Font.BOLD, 15));
+			g2.drawString(Integer.toString(score), WIDTH/2, 20);
+			
+			g2.setColor(new Color(255,255,255));
+			g2.setFont(new Font("Arial", Font.BOLD, 10));
+			g2.drawString("Timer:", 187, 18);
+		
+			g2.setColor(new Color(255,255,255));
+			g2.setFont(new Font("Arial", Font.BOLD, 15));
+			g2.drawString(Integer.toString(timer), 222, 20);
+		}
+		
 		g.dispose();
 		
 		g = bs.getDrawGraphics();
 		g.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
 		bs.show();
+		
+		
+		/***/
+		
 	}
 
 	@Override
