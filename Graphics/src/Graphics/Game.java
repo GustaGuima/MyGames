@@ -150,13 +150,13 @@ public class Game extends Canvas implements Runnable{
 			if(right) {
 				x+=speed;
 			}
-			if(left) {
+			else if(left) {
 				x-=speed;
 			}
 			if(up) {
 				y-=speed;
 			}
-			if(down) {
+			else if(down) {
 				y+=speed;
 			}
 			if(isWalking) {

@@ -11,7 +11,7 @@ public class Ball {
 	public int width, height;
 	
 	public double dx, dy;
-	public double speed = 2.0;
+	public double speed = 3.5;
 	
 	public Ball(double x, double y) {
 		this.x = x;

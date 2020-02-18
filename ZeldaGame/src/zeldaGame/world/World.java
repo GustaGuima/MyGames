@@ -68,8 +68,8 @@ public class World {
 		int xFinal = xStart + (Game.WIDTH/16);
 		int yFinal = yStart + (Game.HEIGHT/16);
 		
-		for(int xx = xStart; xx <= xFinal; xx++) {
-			for(int yy = yStart; yy < yFinal; yy++) {
+		for(int xx = 0; xx < WIDTH; xx++) {
+			for(int yy = 0; yy < HEIGHT; yy++) {
 				Tile tile = tiles[xx + (yy * WIDTH)];
 				tile.render(g);
 			}

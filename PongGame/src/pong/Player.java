@@ -11,6 +11,7 @@ public class Player {
 	
 	//POSICAO DO PLAYER
 	public int x, y, width, height;
+	public int speed = 3;
 	/***/
 	
 	public Player(int x, int y) {
@@ -22,10 +23,10 @@ public class Player {
 	
 	public void update() {
 		if(right) {
-			x++;
+			x += speed;
 		}
 		else if(left) {
-			x--;
+			x -= speed;
 		}
 		
 		if(x + width > Game.WIDHT) {

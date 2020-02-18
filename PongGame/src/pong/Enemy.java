@@ -16,7 +16,7 @@ public class Enemy {
 	}
 	
 	public void update(){
-		x += (Game.ball.x - x - 7) * 0.07;
+		x += (Game.ball.x - x - 7) * 0.1;
 		
 		if(x + width > Game.WIDHT) {
 			x = Game.WIDHT - width;
@@ -24,7 +24,6 @@ public class Enemy {
 		else if(x < 0) {
 			x = 0;
 		}
-		
 	}
 	
 	public void render(Graphics g) {

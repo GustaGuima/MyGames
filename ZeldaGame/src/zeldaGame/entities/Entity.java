@@ -8,16 +8,16 @@ import zeldaGame.world.Camera;
 
 public class Entity {
 	
-	protected double x;
-	protected double y;
-	protected int width;
-	protected int height;
+	public  double x;
+	public  double y;
+	public  int width;
+	public  int height;
 	
 	private BufferedImage sprite;
 	public static BufferedImage LIFE_EN = Game.spriteSheet.getSprite(96, 0, 16, 16);
 	public static BufferedImage WEAPON_EN = Game.spriteSheet.getSprite(112, 0, 16, 16);
 	public static BufferedImage MANA_EN = Game.spriteSheet.getSprite(96, 16, 16, 16);
-	public static BufferedImage ENEMY_EN = Game.spriteSheet.getSprite(112, 16, 16, 16);
+	public static BufferedImage ENEMY_EN = Game.spriteSheet.getSprite(32, 64, 16, 16);
 	
 	public Entity(int x, int y, int width, int height, BufferedImage sprite) {
 		this.x = x;
