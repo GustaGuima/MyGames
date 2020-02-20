@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 
 import zeldaGame.main.Game;
 import zeldaGame.world.Camera;
+import zeldaGame.world.World;
 
 public class Player extends Entity{
 	
@@ -53,21 +54,21 @@ public class Player extends Entity{
 	public void update() {
 		isMoved = false;
 			
-		if(right) {
+		if(right && World.isFree(this.getX() + speed, this.getY())) {
 			isMoved = true;
 			dir = right_dir;
 			x += speed;
-		}else if(left) {
+		}else if(left && World.isFree(this.getX() - speed, this.getY())) {
 			isMoved = true;
 			dir = left_dir;
 			x -= speed;
 		}
 		
-		if(up) {
+		if(up && World.isFree(this.getX(), this.getY() - speed)) {
 			isMoved = true;
 			dir = up_dir;
 			y -= speed;
-		}else if(down) {
+		}else if(down && World.isFree(this.getX(), this.getY() + speed)) {
 			isMoved = true;
 			dir = down_dir;
 			y += speed;
@@ -84,11 +85,12 @@ public class Player extends Entity{
 			}
 		}
 		
-		Camera.x = this.getX() - (Game.WIDTH/2);
-		Camera.y = this.getY() - (Game.HEIGHT/2);
+		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, World.WIDTH*16 - Game.WIDTH);
+		Camera.y = Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, World.HEIGHT*16 - Game.HEIGHT);
 		
 	}
 	
+
 	public void render(Graphics g) {
 		if(dir == down_dir) {
 			g.drawImage(downPlayer[animation], this.getX() - Camera.x, this.getY() - Camera.y, null);
